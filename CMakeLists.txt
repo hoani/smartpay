@@ -10,16 +10,14 @@ else()
 endif()
 
 #set(source_dir  "${PROJECT_SOURCE_DIR}/src/")
-#add_subdirectory(src)
+add_subdirectory(src)
 
-find_library(MHD_LIB microhttpd)
-find_path(MHD_PATH microhttpd.h)
+
 
 add_executable(App ./main.c)
 
-target_link_libraries(App PRIVATE "${MHD_LIB}")
-target_include_directories(App PRIVATE "${MHD_PATH}")
-#target_link_libraries(App PRIVATE Zodiac Person)
+
+target_link_libraries(App PRIVATE Server)
 
 target_compile_features(App PRIVATE c_std_11)
 
