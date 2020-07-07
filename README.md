@@ -1,10 +1,26 @@
 ## Dependencies
 
-CMake
+### Cmake
+https://cmake.org/install/
+
+### Libmicrohttpd
+
+On Mac:
+```bash
+brew install libmicrohttpd
+```
+
+On Ubuntu:
+```bash
+sudo apt install libmicrohttpd
+```
+
+On Windows:
+???
 
 ## Build
 
-### Command line
+### From Command Line
 
 ```bash
 mkdir build
