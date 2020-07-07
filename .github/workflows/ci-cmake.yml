@@ -22,7 +22,7 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    # Runs a single command using the runners shell
+    # Run install and build commands
     - name: Build
       run: |
         sudo apt-get install -y libmicrohttpd-dev
@@ -31,6 +31,6 @@ jobs:
         cmake ..
         cmake --build .
 
-    # Runs a set of commands using the runners shell
-    # - name: Test
-    #   run: ./build/test/tests/Test
+    # Runs all unit tests
+    - name: Test
+      run: ./build/test/tests/Test
