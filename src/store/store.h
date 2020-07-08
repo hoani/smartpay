@@ -8,5 +8,6 @@
 void store_init(void);
 bool store_get(int index, TerminalData_t * terminal);
 int store_count(void);
+int store_add(TerminalData_t terminal);
 
 #endif //__HOANI_STORE_H__
