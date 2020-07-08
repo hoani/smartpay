@@ -16,6 +16,9 @@ TEST_CASE( "Api GET cases", "[Api]" )
   api_init(&ParserFake);
   store_init();
 
+  parser_fake_terminal_return = true;
+  parser_fake_terminal_list_return = true;
+
   SECTION("Api get root returns OK") {
     REQUIRE(Api.get("/", buffer, length) == API_OK);
   }
