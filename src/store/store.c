@@ -43,6 +43,9 @@ int store_count(void) {
 
 int store_add(TerminalData_t terminal) {
   int item_index = next_index;
+  if (item_index > max_terminals) {
+    return k_invalid_id;
+  }
   storage[item_index].assigned = true;
   storage[item_index].terminal = terminal;
   // TODO: kind of wierd to store this twice, should reconsider this

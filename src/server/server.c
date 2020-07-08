@@ -11,6 +11,7 @@ const char *askpage  = "<html><body>Hello, ask!</body></html>";
 const char *errorpage  = "<html><body>Hello, error!</body></html>";
 const char *greetingpage  = "<html><body>Greeting Page!</body></html>";
 
+#define ANSWER_STRING_MAX_LENGTH (2048)
 
 enum ConnectionType {
   POST = 0,
@@ -28,7 +29,7 @@ static int send_page(struct MHD_Connection *connection, const char * page) {
   response = MHD_create_response_from_buffer (strlen (page),
                                           (void*) page, MHD_RESPMEM_PERSISTENT);
   int result = MHD_queue_response (connection, MHD_HTTP_OK, response);
-  MHD_destroy_response (response);
+  MHD_destroy_response(response);
 
   return result;
 }
@@ -61,25 +62,38 @@ int answer_to_connection(
   }
 
   if (0 == strcmp (method, "GET")) {
-    return send_page (connection, askpage);
+    struct connection_info_struct *con_info = *con_cls;
+
+    con_info->answerstring = malloc(ANSWER_STRING_MAX_LENGTH);
+
+    _api->get(url, con_info->answerstring, ANSWER_STRING_MAX_LENGTH);
+
+    int res = send_page(connection, con_info->answerstring);
+    free(con_info->answerstring);
+    free(con_info); // definately not the best way to do this...
+    return res;
   }
 
-  if (0 == strcmp (method, "POST"))
-    {
-      struct connection_info_struct *con_info = *con_cls;
+  if (0 == strcmp (method, "POST")) {
+    struct connection_info_struct *con_info = *con_cls;
 
-      if (*upload_data_size != 0)
-        {
-          printf("%s\n", upload_data);
-          *upload_data_size = 0;
+    if (*upload_data_size != 0){
+      con_info->answerstring = malloc(ANSWER_STRING_MAX_LENGTH);
 
-          return MHD_YES;
-        }
-      else if (NULL != con_info->answerstring)
-        return send_page (connection, con_info->answerstring);
+      _api->post(url, upload_data, con_info->answerstring, ANSWER_STRING_MAX_LENGTH);
+      *upload_data_size = 0;
+
+      return MHD_YES;
     }
+    else if (NULL != con_info->answerstring) {
+      int res = send_page(connection, con_info->answerstring);
+      free(con_info->answerstring);
+      free(con_info); // also definately not the best way to do this...
+      return res;
+    }
+  }
 
-    return send_page(connection, errorpage);
+  return send_page(connection, errorpage);
 }
 
 int server_start(int port, ApiInterface * api) {

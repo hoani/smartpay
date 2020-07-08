@@ -3,10 +3,13 @@
 
 #include <stdlib.h>
 #include "parser.h"
+#include "store.h"
 
 typedef enum {
   API_OK = 0,
-  API_INVALID_URL
+  API_INVALID_URL,
+  API_NOT_FOUND,
+  API_INTERNAL_ERROR
 } ApiResult_h;
 
 typedef struct {
