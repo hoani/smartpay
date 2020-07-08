@@ -1,4 +1,6 @@
 #include "catch.hpp"
+#include <cstring>
+#include <iostream>
 extern "C" {
 #include "api.h"
 #include "parserFake.h"
