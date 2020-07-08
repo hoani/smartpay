@@ -13,6 +13,7 @@ static bool add_transaction_type(TransactionType_t tt, char * buff, size_t lengt
 static bool append_item(char * buff, size_t length, bool add_comma, char * name);
 
 
+
 bool parse_terminal(TerminalData_t terminal, char * buff, size_t length) {
   if (add_start(buff, length) == false) {
     return false;
@@ -34,6 +35,27 @@ bool parse_terminal(TerminalData_t terminal, char * buff, size_t length) {
   }
 
   return add_end(buff, length);
+}
+
+bool parse_terminal_list(TerminalData_t * terminals, size_t count, char * buff, size_t length) {
+  if (add_start(buff, length) == false) {
+    return false;
+  }
+  if (add_string(buff, length, "\"terminals\":[") == false) {
+    return false;
+  }
+  for (size_t i = 0; i < count; i++) {
+    if (parse_terminal(terminals[i], buff, length) == false) {
+      return false;
+    }
+    if (i + 1 < count) {
+      if (add_comma(buff, length) == false) {
+        return false;
+      }
+    }
+  }
+
+  return add_string(buff, length, "]}");
 }
 
 // Helper functions

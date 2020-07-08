@@ -1,6 +1,5 @@
 #include "catch.hpp"
-#include <string>
-#include <stdio>
+#include <cstring>
 extern "C" {
 #include "parser.h"
 #include "terminal.h"
@@ -16,7 +15,7 @@ TEST_CASE( "Single Terminal Encode", "[parser]" )
 
   char buffer[128];
   int length = 128;
-  memset(buffer,'\0',length);
+  std::memset(buffer,'\0',length);
 
 
   SECTION("JSON Encode of Single Terminal") {
@@ -113,29 +112,30 @@ TEST_CASE( "Single Terminal Encode", "[parser]" )
   }
 }
 
-// TEST_CASE( "Multiple Terminal Encode", "[parser]" )
-// {
-//   // Setup
-//   TerminalData_t terminal_data[10] = {
-//     { 1, k_card_visa, k_tt_cheque },
-//     { 2, k_card_master_card, k_tt_savings },
-//     { 3, k_card_eftpos, k_tt_credit }
-//   };
+TEST_CASE( "Multiple Terminal Encode", "[parser]" )
+{
+  // Setup
+  TerminalData_t terminal_data[10] = {
+    { 1, k_card_visa, k_tt_cheque },
+    { 2, k_card_master_card, k_tt_savings },
+    { 3, k_card_eftpos, k_tt_credit }
+  };
 
-//   char buffer[256];
-//   int length = 256;
-//   memset(buffer,'\0',length);
+  char buffer[256];
+  int length = 256;
+  std::memset(buffer,'\0',length);
 
+  SECTION("JSON Encode 3 Terminals") {
 
-//   SECTION("JSON Encode of Single Terminal") {
+    REQUIRE(parse_terminal_list(terminal_data, 3, buffer, length));
 
-//     REQUIRE(parse_terminal_list(terminal_data, 3, buffer, length));
+    std::string result(buffer);
+    std::string expected("{\"terminals\":[\
+{\"id\":1,\"cardType\":[\"Visa\"],\"TransactionType\":[\"Cheque\"]},\
+{\"id\":2,\"cardType\":[\"MasterCard\"],\"TransactionType\":[\"Savings\"]},\
+{\"id\":3,\"cardType\":[\"EFTPOS\"],\"TransactionType\":[\"Credit\"]}\
+]}");
 
-//     std::string result(buffer);
-//     std::string expected("{\"terminals\":\
-//     [{\"id\":3,\"cardType\":[\"Visa\"],\"TransactionType\":[\"Cheque\"]},\
-//     [{\"id\":3,\"cardType\":[\"MasterCard\"],\"TransactionType\":[\"Savings\"]},\
-//     [{\"id\":3,\"cardType\":[\"EFTPOS\"],\"TransactionType\":[\"Credit\"]}]}");
-
-//     REQUIRE(result == expected);
-//   }
+    REQUIRE(result == expected);
+  }
+}
