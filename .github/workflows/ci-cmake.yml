@@ -35,8 +35,3 @@ jobs:
     - name: Test
       run: ./build/test/tests/Test
 
-    # Runs acceptance tests
-    - name: Acceptance
-      run: |
-        ./build/App &
-        ./acceptance/acceptance.sh
