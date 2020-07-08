@@ -16,7 +16,17 @@ static void remove_spaces(char * source);
 static CardType_t parse_card(const char * buff);
 static TransactionType_t parse_transaction_type(const char * buff);
 
-TerminalData_t parse_json(const char * buff) {
+static TerminalData_t parse_json(const char * buff);
+static bool parse_terminal(TerminalData_t terminal, char * buff, size_t length);
+static bool parse_terminal_list(TerminalData_t * terminals, size_t count, char * buff, size_t length);
+
+const ParserInterface Parser = {
+  parse_json,
+  parse_terminal,
+  parse_terminal_list
+};
+
+static TerminalData_t parse_json(const char * buff) {
   // Start with an empty terminal
   TerminalData_t terminal = { k_invalid_id, 0, 0 };
   char compact[256];
@@ -39,7 +49,7 @@ TerminalData_t parse_json(const char * buff) {
   return terminal;
 }
 
-bool parse_terminal(TerminalData_t terminal, char * buff, size_t length) {
+static bool parse_terminal(TerminalData_t terminal, char * buff, size_t length) {
   if (add_start(buff, length) == false) {
     return false;
   }
@@ -62,7 +72,7 @@ bool parse_terminal(TerminalData_t terminal, char * buff, size_t length) {
   return add_end(buff, length);
 }
 
-bool parse_terminal_list(TerminalData_t * terminals, size_t count, char * buff, size_t length) {
+static bool parse_terminal_list(TerminalData_t * terminals, size_t count, char * buff, size_t length) {
   if (add_start(buff, length) == false) {
     return false;
   }
