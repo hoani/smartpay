@@ -1,8 +1,37 @@
 #include <microhttpd.h>
 #include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
 #include "server.h"
 
 static ApiInterface * _api = NULL;
+
+const char *askpage  = "<html><body>Hello, ask!</body></html>";
+const char *errorpage  = "<html><body>Hello, error!</body></html>";
+const char *greetingpage  = "<html><body>Greeting Page!</body></html>";
+
+
+enum ConnectionType {
+  POST = 0,
+  GET = 1
+};
+
+struct connection_info_struct
+{
+  enum ConnectionType connectiontype;
+  char *answerstring;
+};
+
+static enum MHD_Result send_page(struct MHD_Connection *connection, const char * page) {
+  struct MHD_Response *response;
+  response = MHD_create_response_from_buffer (strlen (page),
+                                          (void*) page, MHD_RESPMEM_PERSISTENT);
+  enum  MHD_Result result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+  MHD_destroy_response (response);
+
+  return result;
+}
 
 int answer_to_connection(
   void *cls,
@@ -14,29 +43,43 @@ int answer_to_connection(
   size_t *upload_data_size,
   void **con_cls // connection
   ){
-  const char *page  = "<html><body>Hello, browser!</body></html>";
-  struct MHD_Response *response;
-  int ret;
 
-  printf(url);
-  printf("\n");
-  printf(method);
-  printf("\n");
+  // Queue up incoming connections
+  if(NULL == *con_cls) {
+    struct connection_info_struct *con_info;
 
-  if ((0 != strcmp (method, "GET")) || (_api == NULL)) {
-    return MHD_NO;
+    con_info = malloc (sizeof (struct connection_info_struct));
+    if (NULL == con_info) return MHD_NO;
+    con_info->answerstring = NULL;
+
+    if (0 == strcmp (method, "POST")) {
+      con_info->connectiontype = POST;
+    }
+    else con_info->connectiontype = GET;
+    *con_cls = (void*) con_info;
+    return MHD_YES;
   }
 
-  if (_api->get() == API_OK) {
-    response = MHD_create_response_from_buffer (strlen (page),
-                                          (void*) page, MHD_RESPMEM_PERSISTENT);
-    ret = MHD_queue_response (connection, MHD_HTTP_OK, response);
-    MHD_destroy_response (response);
-
-    return ret;
+  if (0 == strcmp (method, "GET")) {
+    return send_page (connection, askpage);
   }
 
-  return MHD_NO;
+  if (0 == strcmp (method, "POST"))
+    {
+      struct connection_info_struct *con_info = *con_cls;
+
+      if (*upload_data_size != 0)
+        {
+          printf("%s\n", upload_data);
+          *upload_data_size = 0;
+
+          return MHD_YES;
+        }
+      else if (NULL != con_info->answerstring)
+        return send_page (connection, con_info->answerstring);
+    }
+
+    return send_page(connection, errorpage);
 }
 
 int server_start(int port, ApiInterface * api) {
@@ -45,7 +88,8 @@ int server_start(int port, ApiInterface * api) {
   _api = api;
 
   daemon = MHD_start_daemon (MHD_USE_SELECT_INTERNALLY, port, NULL, NULL,
-                             &answer_to_connection, NULL, MHD_OPTION_END);
+                             &answer_to_connection, NULL,
+                             MHD_OPTION_END);
   if (NULL == daemon){
     return 1;
   }
