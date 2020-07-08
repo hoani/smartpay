@@ -13,9 +13,9 @@ TEST_CASE( "Single Terminal Encode", "[parser]" )
   TransactionType_t transaction_type = k_tt_cheque | k_tt_savings;
   TerminalData_t terminal_data = { id, cards, transaction_type };
 
-  char buffer[128];
+  char buffer[128] = { '\0' };
   int length = 128;
-  std::memset(buffer,'\0',length);
+  //std::memset(buffer, 0, sizeof buffer);
 
 
   SECTION("JSON Encode of Single Terminal") {
@@ -123,7 +123,7 @@ TEST_CASE( "Multiple Terminal Encode", "[parser]" )
 
   char buffer[256];
   int length = 256;
-  std::memset(buffer,'\0',length);
+  std::memset(buffer, 0, sizeof buffer);
 
   SECTION("JSON Encode 3 Terminals") {
 
@@ -137,5 +137,32 @@ TEST_CASE( "Multiple Terminal Encode", "[parser]" )
 ]}");
 
     REQUIRE(result == expected);
+  }
+
+  SECTION("JSON Zero Terminals") {
+
+    REQUIRE(parse_terminal_list(terminal_data, 0, buffer, length));
+
+    std::string result(buffer);
+    std::string expected("{\"terminals\":[]}");
+
+    REQUIRE(result == expected);
+  }
+
+  SECTION("JSON Encode 1 Terminal") {
+
+    REQUIRE(parse_terminal_list(terminal_data, 1, buffer, length));
+
+    std::string result(buffer);
+    std::string expected("{\"terminals\":[\
+{\"id\":1,\"cardType\":[\"Visa\"],\"TransactionType\":[\"Cheque\"]}\
+]}");
+
+    REQUIRE(result == expected);
+  }
+
+  SECTION("JSON Encode Terminals, buffer not long enough") {
+
+    REQUIRE(parse_terminal_list(terminal_data, 3, buffer, 32) == false);
   }
 }
