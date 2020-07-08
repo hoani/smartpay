@@ -12,43 +12,9 @@ static bool add_card_type(CardType_t card, char * buff, size_t length);
 static bool add_transaction_type(TransactionType_t tt, char * buff, size_t length);
 static bool append_item(char * buff, size_t length, bool add_comma, char * name);
 
-// TODO: Super hacky whitespace removal here, potential for buffer overflow
-static void remove_spaces(char * source) {
-    const char* destination = source;
-    do {
-        while (*destination == ' ') {
-            ++destination;
-        }
-    } while (*source++ = *destination++);  // depends on reaching a \0
-}
-
-static CardType_t parse_card(const char * buff) {
-  CardType_t cards = 0;
-  if (strstr(buff, "Visa") != NULL) {
-    cards |= k_card_visa;
-  }
-  if (strstr(buff, "MasterCard") != NULL) {
-    cards |= k_card_master_card;
-  }
-  if (strstr(buff, "EFTPOS") != NULL) {
-    cards |= k_card_eftpos;
-  }
-  return cards;
-}
-
-static TransactionType_t parse_transaction_type(const char * buff) {
-  TransactionType_t tt = 0;
-  if (strstr(buff, "Cheque") != NULL) {
-    tt |= k_tt_cheque;
-  }
-  if (strstr(buff, "Savings") != NULL) {
-    tt |= k_tt_savings;
-  }
-  if (strstr(buff, "Credit") != NULL) {
-    tt |= k_tt_credit;
-  }
-  return tt;
-}
+static void remove_spaces(char * source);
+static CardType_t parse_card(const char * buff);
+static TransactionType_t parse_transaction_type(const char * buff);
 
 TerminalData_t parse_json(const char * buff) {
   // Start with an empty terminal
@@ -219,4 +185,44 @@ static bool add_string(char * buff, size_t length, char * str) {
 
   strcat(buff, str);
   return true;
+}
+
+// Helpers for parsing JSON
+
+// TODO: Super hacky whitespace removal here, potential for buffer overflow
+static void remove_spaces(char * source) {
+    const char* destination = source;
+    do {
+        while (*destination == ' ') {
+            ++destination;
+        }
+    } while (*source++ = *destination++);  // depends on reaching a \0
+}
+
+static CardType_t parse_card(const char * buff) {
+  CardType_t cards = 0;
+  if (strstr(buff, "Visa") != NULL) {
+    cards |= k_card_visa;
+  }
+  if (strstr(buff, "MasterCard") != NULL) {
+    cards |= k_card_master_card;
+  }
+  if (strstr(buff, "EFTPOS") != NULL) {
+    cards |= k_card_eftpos;
+  }
+  return cards;
+}
+
+static TransactionType_t parse_transaction_type(const char * buff) {
+  TransactionType_t tt = 0;
+  if (strstr(buff, "Cheque") != NULL) {
+    tt |= k_tt_cheque;
+  }
+  if (strstr(buff, "Savings") != NULL) {
+    tt |= k_tt_savings;
+  }
+  if (strstr(buff, "Credit") != NULL) {
+    tt |= k_tt_credit;
+  }
+  return tt;
 }
