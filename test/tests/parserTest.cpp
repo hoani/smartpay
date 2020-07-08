@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include <string>
+#include <stdio>
 extern "C" {
 #include "parser.h"
 #include "terminal.h"
@@ -111,3 +112,30 @@ TEST_CASE( "Single Terminal Encode", "[parser]" )
     REQUIRE(result == expected);
   }
 }
+
+// TEST_CASE( "Multiple Terminal Encode", "[parser]" )
+// {
+//   // Setup
+//   TerminalData_t terminal_data[10] = {
+//     { 1, k_card_visa, k_tt_cheque },
+//     { 2, k_card_master_card, k_tt_savings },
+//     { 3, k_card_eftpos, k_tt_credit }
+//   };
+
+//   char buffer[256];
+//   int length = 256;
+//   memset(buffer,'\0',length);
+
+
+//   SECTION("JSON Encode of Single Terminal") {
+
+//     REQUIRE(parse_terminal_list(terminal_data, 3, buffer, length));
+
+//     std::string result(buffer);
+//     std::string expected("{\"terminals\":\
+//     [{\"id\":3,\"cardType\":[\"Visa\"],\"TransactionType\":[\"Cheque\"]},\
+//     [{\"id\":3,\"cardType\":[\"MasterCard\"],\"TransactionType\":[\"Savings\"]},\
+//     [{\"id\":3,\"cardType\":[\"EFTPOS\"],\"TransactionType\":[\"Credit\"]}]}");
+
+//     REQUIRE(result == expected);
+//   }
