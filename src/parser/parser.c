@@ -12,7 +12,49 @@ static bool add_card_type(CardType_t card, char * buff, size_t length);
 static bool add_transaction_type(TransactionType_t tt, char * buff, size_t length);
 static bool append_item(char * buff, size_t length, bool add_comma, char * name);
 
+// TODO: Super hacky whitespace removal here, potential for buffer overflow
+static void remove_spaces(char * source) {
+    const char* destination = source;
+    do {
+        while (*destination == ' ') {
+            ++destination;
+        }
+    } while (*source++ = *destination++);  // depends on reaching a \0
+}
 
+// static bool extract_id(const char * buff, size_t length) {
+//   const char * start = strstr(buff, "id:");
+//   if (start == NULL) {
+//     return k_invalid_id;
+//   }
+//   const char * end = strstr(start, ",");
+//   if (end == NULL) {
+//     return k_invalid_id;
+//   }
+//   int id =
+
+// }
+
+TerminalData_t parse_json(char * buff, size_t length) {
+  // Start with an empty terminal
+  TerminalData_t terminal = { k_invalid_id, 0, 0 };
+
+  remove_spaces(buff);
+  char card_str[128];
+  char tt_str[128];
+
+  int id = k_invalid_id;
+
+  int success = sscanf(buff, "{\"id\":%d,\"cardType\":%s,\"TransactionType\":%s}", &id, card_str, tt_str);
+  if (success == 0) { // not successful, try without ID
+    success = sscanf("{\"cardType\":%s,\"TransactionType\":%s}", card_str, tt_str);
+  }
+  if (success == 0) { // Invalid input - TODO: Should be order independent, but we aren't
+    return terminal;
+  }
+
+  return terminal;
+}
 
 bool parse_terminal(TerminalData_t terminal, char * buff, size_t length) {
   if (add_start(buff, length) == false) {

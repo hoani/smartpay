@@ -13,9 +13,9 @@ TEST_CASE( "Single Terminal Encode", "[parser]" )
   TransactionType_t transaction_type = k_tt_cheque | k_tt_savings;
   TerminalData_t terminal_data = { id, cards, transaction_type };
 
-  char buffer[128] = { '\0' };
+  char buffer[128];
   int length = 128;
-  //std::memset(buffer, 0, sizeof buffer);
+  std::memset(buffer, 0, sizeof buffer);
 
 
   SECTION("JSON Encode of Single Terminal") {
