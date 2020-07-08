@@ -22,36 +22,53 @@ static void remove_spaces(char * source) {
     } while (*source++ = *destination++);  // depends on reaching a \0
 }
 
-// static bool extract_id(const char * buff, size_t length) {
-//   const char * start = strstr(buff, "id:");
-//   if (start == NULL) {
-//     return k_invalid_id;
-//   }
-//   const char * end = strstr(start, ",");
-//   if (end == NULL) {
-//     return k_invalid_id;
-//   }
-//   int id =
+static CardType_t parse_card(const char * buff) {
+  CardType_t cards = 0;
+  if (strstr(buff, "Visa") != NULL) {
+    cards |= k_card_visa;
+  }
+  if (strstr(buff, "MasterCard") != NULL) {
+    cards |= k_card_master_card;
+  }
+  if (strstr(buff, "EFTPOS") != NULL) {
+    cards |= k_card_eftpos;
+  }
+  return cards;
+}
 
-// }
+static TransactionType_t parse_transaction_type(const char * buff) {
+  TransactionType_t tt = 0;
+  if (strstr(buff, "Cheque") != NULL) {
+    tt |= k_tt_cheque;
+  }
+  if (strstr(buff, "Savings") != NULL) {
+    tt |= k_tt_savings;
+  }
+  if (strstr(buff, "Credit") != NULL) {
+    tt |= k_tt_credit;
+  }
+  return tt;
+}
 
-TerminalData_t parse_json(char * buff, size_t length) {
+TerminalData_t parse_json(const char * buff) {
   // Start with an empty terminal
   TerminalData_t terminal = { k_invalid_id, 0, 0 };
+  char compact[256];
+  strcpy(compact, buff);
 
-  remove_spaces(buff);
-  char card_str[128];
-  char tt_str[128];
+  remove_spaces(compact);
 
   int id = k_invalid_id;
 
-  int success = sscanf(buff, "{\"id\":%d,\"cardType\":%s,\"TransactionType\":%s}", &id, card_str, tt_str);
-  if (success == 0) { // not successful, try without ID
-    success = sscanf("{\"cardType\":%s,\"TransactionType\":%s}", card_str, tt_str);
+  // if unsuccessful at extracting id, id will be k_invalid_id
+  if (sscanf(compact, "{\"id\":%d,", &id) == 1) {
+    terminal.id = id;
   }
-  if (success == 0) { // Invalid input - TODO: Should be order independent, but we aren't
-    return terminal;
-  }
+
+  // TODO: This method doesn't really pay attention to fields
+  //       super hacky - needs to get context sensitive
+  terminal.card_type = parse_card(compact);
+  terminal.transaction_type = parse_transaction_type(compact);
 
   return terminal;
 }

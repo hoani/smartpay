@@ -6,6 +6,60 @@ extern "C" {
 #include "terminal.h"
 }
 
+// TODO Add fields for malformed JSON - for now we will skip this case.
+TEST_CASE( "JSON parse", "[parser]" )
+{
+  SECTION("JSON parse") {
+    const char buffer[] = "{\"id\":3,\"cardType\":[\"Visa\"],\"TransactionType\":[\"Cheque\",\"Savings\"]}";
+
+    TerminalData_t terminal = parse_json(buffer);
+
+    REQUIRE(terminal.id == 3);
+    REQUIRE(terminal.card_type == k_card_visa);
+    REQUIRE(terminal.transaction_type == (k_tt_cheque | k_tt_savings));
+  }
+
+  SECTION("JSON empty fields") {
+    const char buffer[] = "{\"id\":3,\"cardType\":[],\"TransactionType\":[]}";
+
+    TerminalData_t terminal = parse_json(buffer);
+
+    REQUIRE(terminal.id == 3);
+    REQUIRE(terminal.card_type == 0);
+    REQUIRE(terminal.transaction_type == 0);
+  }
+
+  SECTION("JSON different ID") {
+    const char buffer[] = "{\"id\":1337,\"cardType\":[],\"TransactionType\":[]}";
+
+    TerminalData_t terminal = parse_json(buffer);
+
+    REQUIRE(terminal.id == 1337);
+    REQUIRE(terminal.card_type == 0);
+    REQUIRE(terminal.transaction_type == 0);
+  }
+
+  SECTION("JSON parse other configs") {
+    const char buffer[] = "{\"id\":3,\"cardType\":[\"MasterCard\",\"EFTPOS\"],\"TransactionType\":[\"Credit\"]}";
+
+    TerminalData_t terminal = parse_json(buffer);
+
+    REQUIRE(terminal.id == 3);
+    REQUIRE(terminal.card_type == (k_card_master_card | k_card_eftpos));
+    REQUIRE(terminal.transaction_type == k_tt_credit);
+  }
+
+  SECTION("JSON handle whitespace") {
+    const char buffer[] = "{\"id\":  3 ,   \"cardType\"  :  [ \"MasterCard\" ,\"EFTPOS\"],\"TransactionType\":[\"Credit\"]}";
+
+    TerminalData_t terminal = parse_json(buffer);
+
+    REQUIRE(terminal.id == 3);
+    REQUIRE(terminal.card_type == (k_card_master_card | k_card_eftpos));
+    REQUIRE(terminal.transaction_type == k_tt_credit);
+  }
+}
+
 TEST_CASE( "Single Terminal Encode", "[parser]" )
 {
   // Setup
@@ -21,9 +75,7 @@ TEST_CASE( "Single Terminal Encode", "[parser]" )
 
   SECTION("JSON Encode of Single Terminal") {
 
-    bool res = parse_terminal(terminal_data, buffer, length);
-    std::cout << buffer << std::endl;
-    REQUIRE(res);
+    REQUIRE(parse_terminal(terminal_data, buffer, length));
 
     std::string result(buffer);
     std::string expected("{\"id\":3,\"cardType\":[\"Visa\"],\"TransactionType\":[\"Cheque\",\"Savings\"]}");
