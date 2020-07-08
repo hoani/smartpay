@@ -2,6 +2,7 @@
 #define __HOANI_PARSER_H__
 
 #include "terminal.h"
+#include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
 

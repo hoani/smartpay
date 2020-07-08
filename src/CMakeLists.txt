@@ -1,5 +1,5 @@
 add_subdirectory(terminal)
-add_subdirectory(server)
-add_subdirectory(api)
 add_subdirectory(parser)
 add_subdirectory(store)
+add_subdirectory(api)
+add_subdirectory(server)

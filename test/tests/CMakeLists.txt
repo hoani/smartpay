@@ -11,6 +11,7 @@ target_link_libraries(Test PRIVATE
   Parser
   Terminal
   Store
+  Fakes
 )
 
 target_compile_features(Test PRIVATE cxx_std_11)

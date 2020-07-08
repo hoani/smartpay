@@ -14,7 +14,7 @@ add_subdirectory(src)
 
 add_executable(App ./main.c)
 
-target_link_libraries(App PRIVATE Server Api)
+target_link_libraries(App PRIVATE Server Api Parser Store Terminal)
 
 target_compile_features(App PRIVATE c_std_11)
 
