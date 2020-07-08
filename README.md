@@ -1,6 +1,15 @@
+## Incomplete Tasks
+
+* Unit testing of `API` was lighter than I would have liked
+* Took a few shortcuts with `microhttpd` which I suspect might have some memory repercussions, but I'm not sure
+* The `parser` is very rigid, it would be nice to use a library like `json-c` instead
+* Ideally, the `store` module would be a dynamically allocated linked-list
+* Add `DELETE` support - there is some consideration in `store` for this, but it's primitive
+* Add `PUT` for update support
+
 ## API
 
-### Querying Terminals
+### Querying Terminals - IMPLEMENTED
 
 Query a terminal
 ```
@@ -39,19 +48,16 @@ GET /terminals
 }
 ```
 
-### Adding a Terminal
+### Adding a Terminal - IMPLEMENTED
 
-Query a terminal
+To Add a terminal
 ```
-GET /terminals/1
+POST /terminals '{"cardType": ["visa", "MasterCard"], "TransactionType": ["Cheque"]}'
 ```
 
+The result will be the terminal id:
 ```json
-{
-  "id": 1,
-  "cardType": [ "Visa", "EFTPOS" ],
-  "TransactionType": [ "Cheque", "Savings" ]
-}
+0
 ```
 
 ## Interacting with CURL
@@ -98,3 +104,24 @@ cmake --build .
 ### VSCode
 
 Install the CMake Tools extension and use the little blue bar at the bottom of the window ;)
+
+## Acceptance Testing
+
+Acceptance tests are run as a bash script. In one terminal execute the program:
+```bash
+./build/App
+```
+
+In another terminal, execute the tests:
+```bash
+./acceptance/acceptance.sh
+```
+
+## Unit Tests
+
+Unit tests can be run after a build:
+```bash
+./build/test/tests/Test
+```
+
+
