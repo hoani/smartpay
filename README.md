@@ -64,11 +64,11 @@ The result will be the terminal id:
 ## Interacting with CURL
 
 ```bash
-curl -X GET -H "Accept: application/json" localhost:8888/terminals
+curl -X GET -H "Accept: application/json" localhost:11337/terminals
 ```
 
 ```bash
-curl -X POST -H "Accept: application/json" --data '{"cardType": ["visa", "MasterCard"], "TransactionType": ["Cheque"]}' localhost:8888/terminals
+curl -X POST -H "Accept: application/json" --data '{"cardType": ["visa", "MasterCard"], "TransactionType": ["Cheque"]}' localhost:11337/terminals
 ```
 
 ## Dependencies
