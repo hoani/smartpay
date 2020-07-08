@@ -1,3 +1,7 @@
+//
+// Terminal - Provides a lightweight struct for representing a terminal
+//
+
 
 #include "terminal.h"
 

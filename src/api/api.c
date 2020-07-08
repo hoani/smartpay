@@ -1,3 +1,9 @@
+//
+// Terminal api - Provides the API interface and delegation
+//
+// TODO:
+// - Add PUT/DELETE support
+
 #include <stdio.h>
 #include <string.h>
 #include "api.h"
@@ -30,8 +36,9 @@ static ApiResult_h api_get(const char * url, char * response, size_t len) {
         terminal_num++;
       }
     }
-    // TODO return internal error here for failure to parse
-    _parser->terminal_list(terminals, terminal_num, response, len);
+    if (_parser->terminal_list(terminals, terminal_num, response, len) == false) {
+      return API_INTERNAL_ERROR;
+    }
     return API_OK;
   }
   if (strstr(url, "/terminals/") != NULL) {
@@ -39,8 +46,9 @@ static ApiResult_h api_get(const char * url, char * response, size_t len) {
     TerminalData_t terminal;
     if (sscanf(url, "/terminals/%d", &id) == 1) {
       if (store_get(id, &terminal)) {
-        // TODO return internal error here for failure to parse
-        _parser->terminal(terminal, response, len);
+        if (_parser->terminal(terminal, response, len) == false) {
+          return API_INTERNAL_ERROR;
+        }
         return API_OK;
       }
     }
@@ -50,6 +58,10 @@ static ApiResult_h api_get(const char * url, char * response, size_t len) {
 }
 
 static ApiResult_h api_post(const char * url, const char * data, char * response, size_t len) {
+
+  // shh compiler...
+  (void) len;
+
   if (0 == strcmp(url, "/terminals")) {
     TerminalData_t terminal = _parser->json(data);
 

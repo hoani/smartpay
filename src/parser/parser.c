@@ -1,3 +1,11 @@
+//
+// Terminal parser - encodes/decodes terminal objects to/from JSON
+//
+// TODO:
+// - Separate data string mapping out of static functions (ie add_card_type, add_transaction_type, etc)
+// - Make this parser less fragile (probably by using a proper JSON parser)
+
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -125,7 +133,7 @@ static bool add_card_type(CardType_t card, char * buff, size_t length) {
   }
 
   // Iterate through all card types and check if the bit fields match.
-  // TODO: This data mappinng shouldn't really be defined here
+  // TODO: This data mapping shouldn't really be defined here
   const CardType_t card_bits[3] = { k_card_visa, k_card_master_card, k_card_eftpos };
   const char names[3][16] = { "\"Visa\"", "\"MasterCard\"", "\"EFTPOS\"" };
 

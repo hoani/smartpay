@@ -1,6 +1,7 @@
 ## Incomplete Tasks
 
-* Unit testing of `API` was lighter than I would have liked
+* `api` provides several statuses with the intention of returning specific http responses, the http responses need to be implemented
+* Unit testing of `api` was lighter than I would have liked
 * Took a few shortcuts with `microhttpd` which I suspect might have some memory repercussions, but I'm not sure
 * The `parser` is very rigid, it would be nice to use a library like `json-c` instead
 * Ideally, the `store` module would be a dynamically allocated linked-list

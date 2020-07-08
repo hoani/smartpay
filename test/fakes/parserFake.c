@@ -18,15 +18,20 @@ const ParserInterface ParserFake = {
 };
 
 static TerminalData_t parse_json(const char * buff) {
+  (void) buff;
   return parser_fake_json_return;
 }
 
 static bool parse_terminal(TerminalData_t terminal, char * buff, size_t length) {
+  (void) buff;
+  (void) length;
   parser_fake_terminal_input_terminal = terminal;
   return parser_fake_terminal_return;
 }
 
 static bool parse_terminal_list(TerminalData_t * terminals, size_t count, char * buff, size_t length) {
+  (void) buff;
+  (void) length;
   parser_fake_terminal_list_input_terminals = terminals;
   parser_fake_terminal_list_input_count = count;
   return parser_fake_terminal_list_return;
