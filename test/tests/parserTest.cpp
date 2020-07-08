@@ -7,14 +7,18 @@ extern "C" {
 
 TEST_CASE( "Single Terminal Encode", "[parser]" )
 {
-  SECTION("JSON Encode of Single Terminal") {
-    int id = 3;
-    CardType_t cards = k_card_visa;
-    TransactionType_t transaction_type = k_tt_cheque | k_tt_savings;
-    TerminalData_t terminal_data = { id, cards, transaction_type };
+  // Setup
+  int id = 3;
+  CardType_t cards = k_card_visa;
+  TransactionType_t transaction_type = k_tt_cheque | k_tt_savings;
+  TerminalData_t terminal_data = { id, cards, transaction_type };
 
-    char buffer[128] = { '\0' };
-    int length = 128;
+  char buffer[128];
+  int length = 128;
+  memset(buffer,'\0',length);
+
+
+  SECTION("JSON Encode of Single Terminal") {
 
     REQUIRE(parse_terminal(terminal_data, buffer, length));
 
@@ -25,13 +29,7 @@ TEST_CASE( "Single Terminal Encode", "[parser]" )
   }
 
   SECTION("JSON encode big ID") {
-    int id = 1337;
-    CardType_t cards = k_card_visa;
-    TransactionType_t transaction_type = k_tt_cheque | k_tt_savings;
-    TerminalData_t terminal_data = { id, cards, transaction_type };
-
-    char buffer[128] = { '\0' };
-    int length = 128;
+    terminal_data.id = 1337;
 
     REQUIRE(parse_terminal(terminal_data, buffer, length));
 
@@ -42,13 +40,7 @@ TEST_CASE( "Single Terminal Encode", "[parser]" )
   }
 
   SECTION("JSON encode card types") {
-    int id = 3;
-    CardType_t cards = k_card_master_card | k_card_eftpos;
-    TransactionType_t transaction_type = k_tt_cheque | k_tt_savings;
-    TerminalData_t terminal_data = { id, cards, transaction_type };
-
-    char buffer[128] = { '\0' };
-    int length = 128;
+    terminal_data.card_type = k_card_master_card | k_card_eftpos;
 
     REQUIRE(parse_terminal(terminal_data, buffer, length));
 
@@ -59,98 +51,62 @@ TEST_CASE( "Single Terminal Encode", "[parser]" )
   }
 
   SECTION("JSON encode transaction types") {
-    int id = 3;
-    CardType_t cards = k_card_master_card | k_card_eftpos;
-    TransactionType_t transaction_type = k_tt_credit;
-    TerminalData_t terminal_data = { id, cards, transaction_type };
-
-    char buffer[128] = { '\0' };
-    int length = 128;
+    terminal_data.transaction_type = k_tt_credit;
 
     REQUIRE(parse_terminal(terminal_data, buffer, length));
 
     std::string result(buffer);
-    std::string expected("{\"id\":3,\"cardType\":[\"MasterCard\",\"EFTPOS\"],\"TransactionType\":[\"Credit\"]}");
+    std::string expected("{\"id\":3,\"cardType\":[\"Visa\"],\"TransactionType\":[\"Credit\"]}");
 
     REQUIRE(result == expected);
   }
 
   SECTION("JSON buffer too small") {
-    int id = 3;
-    CardType_t cards = k_card_master_card | k_card_eftpos;
-    TransactionType_t transaction_type = k_tt_credit;
-    TerminalData_t terminal_data = { id, cards, transaction_type };
-
-    char buffer[10] = { '\0' };
-    int length = 10;
+    length = 10;
 
     REQUIRE(parse_terminal(terminal_data, buffer, length) == false);
   }
 
   SECTION("JSON encode with empty cards") {
-    int id = 3;
-    CardType_t cards = 0;
-    TransactionType_t transaction_type = k_tt_credit;
-    TerminalData_t terminal_data = { id, cards, transaction_type };
-
-    char buffer[128] = { '\0' };
-    int length = 128;
+    terminal_data.card_type = 0;
 
     REQUIRE(parse_terminal(terminal_data, buffer, length));
 
     std::string result(buffer);
-    std::string expected("{\"id\":3,\"cardType\":[],\"TransactionType\":[\"Credit\"]}");
+    std::string expected("{\"id\":3,\"cardType\":[],\"TransactionType\":[\"Cheque\",\"Savings\"]}");
 
     REQUIRE(result == expected);
   }
 
   SECTION("JSON encode with invalid cards") {
-    int id = 3;
-    CardType_t cards = 0xff00;
-    TransactionType_t transaction_type = k_tt_credit;
-    TerminalData_t terminal_data = { id, cards, transaction_type };
-
-    char buffer[128] = { '\0' };
-    int length = 128;
+    terminal_data.card_type = 0xff00;
 
     REQUIRE(parse_terminal(terminal_data, buffer, length));
 
     std::string result(buffer);
-    std::string expected("{\"id\":3,\"cardType\":[],\"TransactionType\":[\"Credit\"]}");
+    std::string expected("{\"id\":3,\"cardType\":[],\"TransactionType\":[\"Cheque\",\"Savings\"]}");
 
     REQUIRE(result == expected);
   }
 
   SECTION("JSON encode with empty transaction types") {
-    int id = 3;
-    CardType_t cards = k_card_master_card | k_card_eftpos;
-    TransactionType_t transaction_type = 0;
-    TerminalData_t terminal_data = { id, cards, transaction_type };
-
-    char buffer[128] = { '\0' };
-    int length = 128;
+    terminal_data.transaction_type = 0;
 
     REQUIRE(parse_terminal(terminal_data, buffer, length));
 
     std::string result(buffer);
-    std::string expected("{\"id\":3,\"cardType\":[\"MasterCard\",\"EFTPOS\"],\"TransactionType\":[]}");
+    std::string expected("{\"id\":3,\"cardType\":[\"Visa\"],\"TransactionType\":[]}");
 
     REQUIRE(result == expected);
   }
 
   SECTION("JSON encode with invalid transaction types") {
-    int id = 3;
-    CardType_t cards = k_card_master_card | k_card_eftpos;
-    TransactionType_t transaction_type = 0xff00;
-    TerminalData_t terminal_data = { id, cards, transaction_type };
-
-    char buffer[128] = { '\0' };
-    int length = 128;
+    terminal_data.transaction_type = 0xff00;
 
     REQUIRE(parse_terminal(terminal_data, buffer, length));
 
     std::string result(buffer);
-    std::string expected("{\"id\":3,\"cardType\":[\"MasterCard\",\"EFTPOS\"],\"TransactionType\":[]}");
+    std::string expected("{\"id\":3,\"cardType\":[\"Visa\"],\"TransactionType\":[]}");
 
     REQUIRE(result == expected);
   }

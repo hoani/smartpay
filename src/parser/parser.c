@@ -57,8 +57,9 @@ static bool add_id(int id, char * buff, size_t length) {
 }
 
 static bool add_card_type(CardType_t card, char * buff, size_t length) {
-  char field_str[64] = { '\0' };
+  char field_str[64];
   const size_t field_length = 64;
+  memset(field_str,'\0',field_length);
   bool include_comma = false;
 
   if (add_string(field_str, field_length, "\"cardType\":[") == false) {
@@ -87,9 +88,10 @@ static bool add_card_type(CardType_t card, char * buff, size_t length) {
 }
 
 static bool add_transaction_type(TransactionType_t tt, char * buff, size_t length) {
-  char field_str[64] = { '\0' };
+  char field_str[64];
   const size_t field_length = 64;
   bool include_comma = false;
+  memset(field_str,'\0',field_length);
 
   if (add_string(field_str, field_length, "\"TransactionType\":[") == false) {
     return false;
