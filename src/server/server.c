@@ -65,6 +65,7 @@ int answer_to_connection(
     struct connection_info_struct *con_info = *con_cls;
 
     con_info->answerstring = malloc(ANSWER_STRING_MAX_LENGTH);
+    con_info->answerstring[0] = '\0';
 
     _api->get(url, con_info->answerstring, ANSWER_STRING_MAX_LENGTH);
 
@@ -79,6 +80,7 @@ int answer_to_connection(
 
     if (*upload_data_size != 0){
       con_info->answerstring = malloc(ANSWER_STRING_MAX_LENGTH);
+      con_info->answerstring[0] = '\0';
 
       _api->post(url, upload_data, con_info->answerstring, ANSWER_STRING_MAX_LENGTH);
       *upload_data_size = 0;
