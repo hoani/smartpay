@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include <cstring>
+#include <iostream>
 extern "C" {
 #include "parser.h"
 #include "terminal.h"
@@ -20,7 +21,9 @@ TEST_CASE( "Single Terminal Encode", "[parser]" )
 
   SECTION("JSON Encode of Single Terminal") {
 
-    REQUIRE(parse_terminal(terminal_data, buffer, length));
+    bool res = parse_terminal(terminal_data, buffer, length);
+    std::cout << buffer << std::endl;
+    REQUIRE(res);
 
     std::string result(buffer);
     std::string expected("{\"id\":3,\"cardType\":[\"Visa\"],\"TransactionType\":[\"Cheque\",\"Savings\"]}");

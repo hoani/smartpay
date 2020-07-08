@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+const int k_invalid_id = -1;
+
 typedef uint16_t CardType_t;
 
 const CardType_t k_card_visa = 0x0001;

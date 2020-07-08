@@ -115,7 +115,8 @@ static bool add_end(char * buff, size_t length) {
 }
 
 static bool add_id(int id, char * buff, size_t length) {
-  char id_str[24] = { '\0' };
+  char id_str[24];
+  memset(id_str, 0, sizeof id_str);
   (void) sprintf(id_str, "\"id\":%d", id);
   return add_string(buff, length, id_str);
 }
@@ -123,7 +124,7 @@ static bool add_id(int id, char * buff, size_t length) {
 static bool add_card_type(CardType_t card, char * buff, size_t length) {
   char field_str[64];
   const size_t field_length = 64;
-  memset(field_str,'\0',field_length);
+  memset(field_str, 0, sizeof field_str);
   bool include_comma = false;
 
   if (add_string(field_str, field_length, "\"cardType\":[") == false) {
@@ -135,7 +136,7 @@ static bool add_card_type(CardType_t card, char * buff, size_t length) {
   const CardType_t card_bits[3] = { k_card_visa, k_card_master_card, k_card_eftpos };
   const char names[3][16] = { "\"Visa\"", "\"MasterCard\"", "\"EFTPOS\"" };
 
-  for (size_t i = 0; i < sizeof(card_bits); i++ ) {
+  for (size_t i = 0; i < 3; i++ ) {
     if (card & card_bits[i]) {
       if (append_item(field_str, field_length, include_comma, (char *) names[i]) == false) {
         return false;
@@ -155,7 +156,7 @@ static bool add_transaction_type(TransactionType_t tt, char * buff, size_t lengt
   char field_str[64];
   const size_t field_length = 64;
   bool include_comma = false;
-  memset(field_str,'\0',field_length);
+  memset(field_str, 0, sizeof field_str);
 
   if (add_string(field_str, field_length, "\"TransactionType\":[") == false) {
     return false;
@@ -166,7 +167,7 @@ static bool add_transaction_type(TransactionType_t tt, char * buff, size_t lengt
   const TransactionType_t tt_bits[3] = { k_tt_cheque, k_tt_savings, k_tt_credit };
   const char names[3][16] = { "\"Cheque\"", "\"Savings\"", "\"Credit\"" };
 
-  for (size_t i = 0; i < sizeof(tt_bits); i++ ) {
+  for (size_t i = 0; i < 3; i++ ) {
     if (tt & tt_bits[i]) {
       if (append_item(field_str, field_length, include_comma, (char *) names[i]) == false) {
         return false;
