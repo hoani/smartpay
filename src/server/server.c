@@ -23,11 +23,11 @@ struct connection_info_struct
   char *answerstring;
 };
 
-static enum MHD_Result send_page(struct MHD_Connection *connection, const char * page) {
+static int send_page(struct MHD_Connection *connection, const char * page) {
   struct MHD_Response *response;
   response = MHD_create_response_from_buffer (strlen (page),
                                           (void*) page, MHD_RESPMEM_PERSISTENT);
-  enum  MHD_Result result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+  int result = MHD_queue_response (connection, MHD_HTTP_OK, response);
   MHD_destroy_response (response);
 
   return result;
