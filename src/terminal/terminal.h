@@ -3,19 +3,19 @@
 
 #include <stdint.h>
 
-const int k_invalid_id = -1;
+extern const int k_invalid_id;
 
 typedef uint16_t CardType_t;
 
-const CardType_t k_card_visa = 0x0001;
-const CardType_t k_card_master_card = 0x0002;
-const CardType_t k_card_eftpos = 0x0004;
+extern const CardType_t k_card_visa;
+extern const CardType_t k_card_master_card;
+extern const CardType_t k_card_eftpos;
 
 typedef uint16_t TransactionType_t;
 
-const CardType_t k_tt_cheque = 0x0001;
-const CardType_t k_tt_savings = 0x0002;
-const CardType_t k_tt_credit = 0x0004;
+extern const CardType_t k_tt_cheque;
+extern const CardType_t k_tt_savings;
+extern const CardType_t k_tt_credit;
 
 typedef struct {
   int id;
